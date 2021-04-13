@@ -101,14 +101,16 @@ EasyLink_TxPacket txPacket = {{0}, 0, 0, {0}};
 float distanceCalc(int8_t rssi){
        int8_t Po;
        float d;
-       Po = -14;
+       float n;
+       n = -3.2;
+       Po = -17;
        if (Po-rssi == 0){
                d = 0;
        }
        else{
-           d = Po-rssi;
-           d = d/20;
-           d = pow(d,10);
+           d = rssi-Po;
+           d = (d/(10*n));
+           d = pow(10,d);
        }
        return d;
    }
@@ -134,13 +136,13 @@ void echoTxDoneCb(EasyLink_Status status)
 
 void echoRxDoneCb(EasyLink_RxPacket * rxPacket, EasyLink_Status status)
 {
-    float rxRssi;
-    rxRssi= rxPacket->rssi;
-    float distance;
-    distance = distanceCalc(rxRssi);
-
     if (status == EasyLink_Status_Success)
     {
+        float rxRssi;
+        rxRssi= rxPacket->rssi;
+        float distance;
+        distance = distanceCalc(rxRssi);
+
         /* Toggle LED2 to indicate RX, clear LED1 */
         PIN_setOutputValue(pinHandle, Board_PIN_LED2,!PIN_getOutputValue(Board_PIN_LED2));
         PIN_setOutputValue(pinHandle, Board_PIN_LED1, 0);
